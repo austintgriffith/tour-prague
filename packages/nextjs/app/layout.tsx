@@ -1,7 +1,7 @@
 import localFont from "next/font/local";
 import Script from "next/script";
 import "@rainbow-me/rainbowkit/styles.css";
-import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
+import { Providers } from "~~/components/Providers";
 import { ThemeProvider } from "~~/components/ThemeProvider";
 import "~~/styles/globals.css";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
@@ -43,7 +43,7 @@ export const metadata = getMetadata({
   description: "Bringing Ethereum curriculum, tools, and mentorship to you!",
 });
 
-const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html suppressHydrationWarning lang="en" className={`${satoshi.variable} ${ppWriter.variable}`}>
       <head>
@@ -51,11 +51,11 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
       </head>
       <body className="font-satoshi">
         <ThemeProvider enableSystem>
-          <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
+          <Providers>
+            <div className="min-h-screen">{children}</div>
+          </Providers>
         </ThemeProvider>
       </body>
     </html>
   );
-};
-
-export default ScaffoldEthApp;
+}
