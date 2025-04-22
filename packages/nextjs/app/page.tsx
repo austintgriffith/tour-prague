@@ -6,19 +6,30 @@ import Image from "next/image";
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [viewportHeight, setViewportHeight] = useState(0);
+  const [documentHeight, setDocumentHeight] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
 
-    // Set initial viewport height
-    setViewportHeight(window.innerHeight);
+    // Initialize state with current values including scroll position
+    const initializeState = () => {
+      setScrollY(window.scrollY);
+      setViewportHeight(window.innerHeight);
+      setDocumentHeight(document.body.scrollHeight);
+      setIsInitialized(true);
+    };
 
-    // Handle resize to update viewport height
+    // Handle resize to update heights
     const handleResize = () => {
       setViewportHeight(window.innerHeight);
+      setDocumentHeight(document.body.scrollHeight);
     };
+
+    // Initialize on first render
+    initializeState();
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleResize, { passive: true });
@@ -29,11 +40,21 @@ export default function Home() {
     };
   }, []);
 
+  // Only calculate styles after initialization
+  if (!isInitialized) {
+    return <div className="min-h-screen"></div>; // Simple loading state
+  }
+
   // Calculate opacity based on scroll position
-  const backgroundOpacity = viewportHeight ? Math.max(0.05, 1 - (scrollY / viewportHeight) * 0.95) : 1;
+  const backgroundOpacity = viewportHeight ? Math.max(0.05, 1 - (scrollY / (viewportHeight * 2.5)) * 0.95) : 1;
 
   // Calculate date text scale based on scroll position
   const dateScale = Math.min(1.5, 1 + (scrollY / (viewportHeight * 1.5)) * 0.8);
+
+  // Calculate card opacity based on scroll position (appears after scrolling past title)
+  const scrollProgress = documentHeight ? scrollY / (documentHeight - viewportHeight) : 0;
+  const cardVisibilityThreshold = 1.2; // Show cards after scrolling much further down the page
+  const cardOpacity = Math.min(1, Math.max(0, (scrollY / viewportHeight - cardVisibilityThreshold) * 2)) || 0;
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -44,7 +65,7 @@ export default function Home() {
 
       {/* New background that fades as you scroll */}
       <div
-        className="absolute inset-0 w-full h-full z-30"
+        className="absolute inset-0 w-full h-full z-40"
         style={{
           opacity: backgroundOpacity,
           transition: "opacity 0.1s ease-out",
@@ -79,14 +100,13 @@ export default function Home() {
 
       {/* Floating Airship that moves down as you scroll */}
       <div
-        className="absolute z-20 w-64 lg:w-80"
+        className="absolute z-50 w-64 lg:w-80"
         style={{
           position: "fixed",
           top: `${190 + scrollY * 0.5}px`,
           right: `${180 - scrollY * 0.04}px`,
           transform: `scaleX(-1) scale(${Math.max(0.8, 1 - scrollY * 0.0001)})`,
           transition: "transform 0.1s ease-out",
-          opacity: scrollY > viewportHeight * 2.5 ? 0 : 1,
         }}
       >
         <Image
@@ -98,6 +118,84 @@ export default function Home() {
           sizes="(max-width: 768px) 30vw, 20vw"
         />
       </div>
+
+      {/* Tour Information Card */}
+      <div
+        className="fixed bottom-60 left-1/2 transform -translate-x-1/2 w-11/12 max-w-3xl z-60 rounded-xl p-8 shadow-2xl"
+        style={{
+          opacity: cardOpacity,
+          visibility: cardOpacity > 0.05 ? "visible" : "hidden",
+          transition: "opacity 0.3s ease-out",
+          backgroundColor: "rgba(245, 245, 245, 0.95)",
+        }}
+      >
+        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Learn how to build on Ethereum</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-3 text-gray-800">Beginner</h3>
+            <ul className="space-y-2 text-gray-700">
+              <li>Tinkering with Solidity</li>
+              <li>Staking App</li>
+              <li>Token Vendor</li>
+              <li>DEX</li>
+            </ul>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-3 text-gray-800">Moderate</h3>
+            <ul className="space-y-2 text-gray-700">
+              <li>Lending</li>
+              <li>Oracles</li>
+              <li>Prediction Markets</li>
+              <li>Stablecoins</li>
+            </ul>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-3 text-gray-800">Hard</h3>
+            <ul className="space-y-2 text-gray-700">
+              <li>CTF</li>
+              <li>Game?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Hosted by BuidlGuidl Card */}
+      <a
+        href="https://buidlguidl.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-300px max-w-xs z-90 rounded-lg p-3 shadow-md text-center cursor-pointer hover:shadow-xl transition-all"
+        style={{
+          opacity: cardOpacity,
+          visibility: cardOpacity > 0.05 ? "visible" : "hidden",
+          transition: "opacity 0.3s ease-out, box-shadow 0.3s ease",
+          backgroundColor: "rgba(245, 245, 245, 0.95)",
+          pointerEvents: cardOpacity > 0.05 ? "auto" : "none",
+        }}
+      >
+        <div className="text-gray-700 hover:text-gray-900 font-medium flex items-center justify-center gap-1">
+          hosted by
+          <svg
+            fill="none"
+            height="20"
+            viewBox="0 0 31 28"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+            className="inline-block"
+          >
+            <g fill="#000000">
+              <path d="m12.4281 16.7412h-11.514526v10.7741h11.514526z"></path>
+              <path d="m30.4196 16.7412h-11.5145v10.7741h11.5145z"></path>
+              <path d="m23.223 10.9949h-15.47259v11.1333h15.47259z"></path>
+              <path d="m5.59135 10.9949h-4.677776v11.1333h4.677776z"></path>
+              <path d="m30.4199 10.9949h-4.6778v11.1333h4.6778z"></path>
+              <path d="m29.6995 5.96693v-5.387096h-12.2341v5.387096z"></path>
+              <path d="m18.9048.579834h-6.4769v10.415066h6.4769z"></path>
+            </g>
+          </svg>
+          buidlguidl
+        </div>
+      </a>
 
       {/* Add some content to enable scrolling */}
       <div className="h-[300vh]"></div>

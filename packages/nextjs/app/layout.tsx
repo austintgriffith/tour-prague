@@ -39,7 +39,7 @@ const ppWriter = localFont({
 });
 
 export const metadata = getMetadata({
-  title: "Ethereum on Tour",
+  title: "eth on tour: prague",
   description: "Bringing Ethereum curriculum, tools, and mentorship to you!",
 });
 
