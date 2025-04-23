@@ -98,15 +98,16 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Floating Airship that moves down as you scroll */}
+      {/* Floating Airship that subtly floats away as you scroll */}
       <div
         className="absolute z-50 w-64 lg:w-80"
         style={{
           position: "fixed",
-          top: `${190 + scrollY * 0.5}px`,
-          right: `${180 - scrollY * 0.04}px`,
-          transform: `scaleX(-1) scale(${Math.max(0.8, 1 - scrollY * 0.0001)})`,
-          transition: "transform 0.1s ease-out",
+          top: `${130 - scrollY * 0.1}px`,
+          right: `${80 - scrollY * 0.2}px`,
+          transform: `scaleX(-1) scale(${Math.max(0.85, 1 - scrollY * 0.0003)})`,
+          opacity: Math.max(0, 1 - scrollY * 0.001),
+          transition: "transform 0.2s ease-out, opacity 0.3s ease-out, top 0.2s ease-out, right 0.2s ease-out",
         }}
       >
         <Image
@@ -121,12 +122,15 @@ export default function Home() {
 
       {/* Tour Information Card */}
       <div
-        className="fixed bottom-60 left-1/2 transform -translate-x-1/2 w-11/12 max-w-3xl z-60 rounded-xl p-8 shadow-2xl"
+        className="fixed z-60 w-11/12 max-w-3xl rounded-xl p-8 shadow-2xl"
         style={{
           opacity: cardOpacity,
           visibility: cardOpacity > 0.05 ? "visible" : "hidden",
           transition: "opacity 0.3s ease-out",
           backgroundColor: "rgba(245, 245, 245, 0.95)",
+          bottom: viewportHeight < 700 ? "5px" : "60px", // Lower position on small screens
+          left: "50%",
+          transform: "translateX(-50%)",
         }}
       >
         <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Learn how to build on Ethereum</h2>
@@ -164,13 +168,16 @@ export default function Home() {
         href="https://buidlguidl.com"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-300px max-w-xs z-90 rounded-lg p-3 shadow-md text-center cursor-pointer hover:shadow-xl transition-all"
+        className="fixed z-90 w-300px max-w-xs rounded-lg p-3 shadow-md text-center cursor-pointer hover:shadow-xl transition-all"
         style={{
           opacity: cardOpacity,
           visibility: cardOpacity > 0.05 ? "visible" : "hidden",
           transition: "opacity 0.3s ease-out, box-shadow 0.3s ease",
           backgroundColor: "rgba(245, 245, 245, 0.95)",
           pointerEvents: cardOpacity > 0.05 ? "auto" : "none",
+          bottom: viewportHeight < 700 ? "calc(320px + 15px)" : "6px", // Ensure BuidlGuidl card appears below main card
+          left: "50%",
+          transform: "translateX(-50%)",
         }}
       >
         <div className="text-gray-700 hover:text-gray-900 font-medium flex items-center justify-center gap-1">
