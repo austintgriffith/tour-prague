@@ -7,7 +7,6 @@ import Image from "next/image";
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [viewportHeight, setViewportHeight] = useState(0);
-  const [documentHeight, setDocumentHeight] = useState(0);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -20,7 +19,6 @@ export default function Home() {
     const initializeState = () => {
       setScrollY(window.scrollY);
       setViewportHeight(window.innerHeight);
-      setDocumentHeight(document.body.scrollHeight);
       // Check if device is mobile based on screen width
       setIsMobile(window.innerWidth < 768);
       setIsInitialized(true);
@@ -29,7 +27,6 @@ export default function Home() {
     // Handle resize to update heights
     const handleResize = () => {
       setViewportHeight(window.innerHeight);
-      setDocumentHeight(document.body.scrollHeight);
       setIsMobile(window.innerWidth < 768);
     };
 
@@ -57,7 +54,6 @@ export default function Home() {
   const dateScale = Math.min(1.5, 1 + (scrollY / (viewportHeight * 1.5)) * 0.8);
 
   // Calculate card opacity based on scroll position (appears after scrolling past title)
-  const scrollProgress = documentHeight ? scrollY / (documentHeight - viewportHeight) : 0;
   const cardVisibilityThreshold = 1.2; // Show cards after scrolling much further down the page
   const cardOpacity = Math.min(1, Math.max(0, (scrollY / viewportHeight - cardVisibilityThreshold) * 2)) || 0;
 
