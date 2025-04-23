@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Head from "next/head";
 import Image from "next/image";
 
 export default function Home() {
@@ -8,6 +9,7 @@ export default function Home() {
   const [viewportHeight, setViewportHeight] = useState(0);
   const [documentHeight, setDocumentHeight] = useState(0);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +21,8 @@ export default function Home() {
       setScrollY(window.scrollY);
       setViewportHeight(window.innerHeight);
       setDocumentHeight(document.body.scrollHeight);
+      // Check if device is mobile based on screen width
+      setIsMobile(window.innerWidth < 768);
       setIsInitialized(true);
     };
 
@@ -26,6 +30,7 @@ export default function Home() {
     const handleResize = () => {
       setViewportHeight(window.innerHeight);
       setDocumentHeight(document.body.scrollHeight);
+      setIsMobile(window.innerWidth < 768);
     };
 
     // Initialize on first render
@@ -58,6 +63,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=0.7, maximum-scale=1.0, user-scalable=no" />
+      </Head>
+
       {/* Full-screen background image */}
       <div className="absolute inset-0 w-full h-full">
         <Image src="/prague_full_tall.png" alt="Prague" fill className="object-cover" priority sizes="100vw" />
@@ -128,7 +137,7 @@ export default function Home() {
           visibility: cardOpacity > 0.05 ? "visible" : "hidden",
           transition: "opacity 0.3s ease-out",
           backgroundColor: "rgba(245, 245, 245, 0.95)",
-          bottom: viewportHeight < 700 ? "5px" : "60px", // Lower position on small screens
+          bottom: isMobile ? "5px" : "240px", // Use isMobile state instead of viewportHeight
           left: "50%",
           transform: "translateX(-50%)",
         }}
@@ -136,6 +145,7 @@ export default function Home() {
         <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Learn how to build on Ethereum</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white p-4 rounded-lg shadow-md">
+            <div className="text-sm font-medium text-gray-500 mb-1">Hour 1</div>
             <h3 className="text-xl font-semibold mb-3 text-gray-800">Beginner</h3>
             <ul className="space-y-2 text-gray-700">
               <li>Tinkering with Solidity</li>
@@ -145,6 +155,7 @@ export default function Home() {
             </ul>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-md">
+            <div className="text-sm font-medium text-gray-500 mb-1">Hour 2</div>
             <h3 className="text-xl font-semibold mb-3 text-gray-800">Moderate</h3>
             <ul className="space-y-2 text-gray-700">
               <li>Lending</li>
@@ -154,6 +165,7 @@ export default function Home() {
             </ul>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-md">
+            <div className="text-sm font-medium text-gray-500 mb-1">Hour 3</div>
             <h3 className="text-xl font-semibold mb-3 text-gray-800">Hard</h3>
             <ul className="space-y-2 text-gray-700">
               <li>CTF</li>
@@ -175,7 +187,7 @@ export default function Home() {
           transition: "opacity 0.3s ease-out, box-shadow 0.3s ease",
           backgroundColor: "rgba(245, 245, 245, 0.95)",
           pointerEvents: cardOpacity > 0.05 ? "auto" : "none",
-          bottom: viewportHeight < 700 ? "calc(320px + 15px)" : "6px", // Ensure BuidlGuidl card appears below main card
+          bottom: isMobile ? "calc(230px + 15px)" : "60px", // Adjusted for mobile
           left: "50%",
           transform: "translateX(-50%)",
         }}
